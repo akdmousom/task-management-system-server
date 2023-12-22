@@ -40,7 +40,7 @@ async function run() {
     app.post('/api/v1/add-task', async(req,res)=>{
         const data = req.body;
         const result = await addedTaks.insertOne(data)
-        
+
         res.send(result)
        
 
@@ -49,6 +49,7 @@ async function run() {
     app.get('/api/v1/all-task', async(req,res)=>{
         const cursor = addedTaks;
         const result = await cursor.find().toArray();
+        
         res.send(result)
     })
 
