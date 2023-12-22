@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 
 const port = process.env.PORT || 5000;
@@ -40,7 +40,6 @@ async function run() {
     app.post('/api/v1/add-task', async(req,res)=>{
         const data = req.body;
         const result = await addedTaks.insertOne(data)
-
         res.send(result)
        
        
@@ -52,8 +51,22 @@ async function run() {
         const {email}= req.query
         const query = {email:email}
         const result = await cursor.find(query).toArray();
-
         res.send(result)
+    })
+
+    app.patch('/api/v1/completed-task/:id', async(req,res)=>{
+        const id = req.params.id;
+        const cursor = addedTaks;
+        const filter = {_id: new ObjectId(id)};
+        const options = { upsert: true };
+        const updateDoc = {
+            $set: {
+              taskStatus: 'completed'
+            },
+          };
+        const result = await cursor.updateOne(filter, updateDoc, options);
+        res.send(result)
+
     })
 
   
