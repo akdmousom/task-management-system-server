@@ -43,16 +43,20 @@ async function run() {
 
         res.send(result)
        
+       
 
     })
 
     app.get('/api/v1/all-task', async(req,res)=>{
         const cursor = addedTaks;
-        const result = await cursor.find().toArray();
-        
+        const {email}= req.query
+        const query = {email:email}
+        const result = await cursor.find(query).toArray();
+
         res.send(result)
     })
 
+  
 
 
 
