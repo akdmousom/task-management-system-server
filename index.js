@@ -40,6 +40,7 @@ async function run() {
     app.post('/api/v1/add-task', async(req,res)=>{
         const data = req.body;
         const result = await addedTaks.insertOne(data)
+        
         res.send(result)
        
 
