@@ -113,6 +113,28 @@ app.get('/api/v1/edit-task/:id', async(req,res)=>{
 })
 
 
+app.put('/api/v1/edited-task/:id', async(req,res)=>{
+  const id = req.params.id;
+  const data = req.body;
+  const {taskTitle, taskDescription, TaskDeadlines,taskLevel, taskStatus} = data
+  const cursor = addedTaks;
+  const filter = {_id: new ObjectId(id)};
+  const options = { upsert: true };
+  const updateDoc = {
+      $set: {
+        taskTitle: taskTitle,
+        taskDescription: taskDescription,
+        TaskDeadlines: TaskDeadlines,
+        taskLevel: taskLevel,
+        taskStatus: taskStatus,
+      },
+    };
+  const result = await cursor.updateOne(filter, updateDoc, options);
+  res.send(result)
+
+})
+
+
 app.get('/api/v1/all-task', async(req,res)=>{
   const {email, taskStatus}= req.query
   let query;
