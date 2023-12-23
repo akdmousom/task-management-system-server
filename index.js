@@ -9,8 +9,8 @@ const app = express();
 
 app.use(express.json())
 app.use(cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: ["https://noteer-task-management-system.web.app", "https://noteer-task-management-system.firebaseapp.com"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   }));
 
@@ -37,65 +37,91 @@ async function run() {
   try {
 
 
-    app.post('/api/v1/add-task', async(req,res)=>{
-        const data = req.body;
-        const result = await addedTaks.insertOne(data)
-        res.send(result)
-       
-       
-
-    })
-
-    app.get('/api/v1/all-task', async(req,res)=>{
-        const cursor = addedTaks;
-        const {email}= req.query
-        const query = {email:email}
-        const result = await cursor.find(query).toArray();
-        res.send(result)
-    })
-
-    app.patch('/api/v1/completed-task/:id', async(req,res)=>{
-        const id = req.params.id;
-        const cursor = addedTaks;
-        const filter = {_id: new ObjectId(id)};
-        const options = { upsert: true };
-        const updateDoc = {
-            $set: {
-              taskStatus: 'completed'
-            },
-          };
-        const result = await cursor.updateOne(filter, updateDoc, options);
-        res.send(result)
-
-    })
-
-  
-
-
-
-    app.get('/helth', async(req,res)=>{
-        res.send('Server Is Running')
-    })
-    
-    app.listen(port, ()=>{
-        console.log(`The server is running on port: ${port}`);
-    })
-
-
-
-
-
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    // await client.db("admin").command({ ping: 1 });
+    // console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
   }
 }
 run().catch(console.dir);
+
+app.post('/api/v1/add-task', async(req,res)=>{
+    const data = req.body;
+    const result = await addedTaks.insertOne(data)
+    res.send(result)
+   
+   
+
+})
+
+app.get('/api/v1/all-task', async(req,res)=>{
+    const cursor = addedTaks;
+    const {email}= req.query
+    const query = {email:email}
+    const result = await cursor.find(query).toArray();
+    res.send(result)
+})
+
+app.patch('/api/v1/completed-task/:id', async(req,res)=>{
+    const id = req.params.id;
+    const cursor = addedTaks;
+    const filter = {_id: new ObjectId(id)};
+    const options = { upsert: true };
+    const updateDoc = {
+        $set: {
+          taskStatus: 'completed'
+        },
+      };
+    const result = await cursor.updateOne(filter, updateDoc, options);
+    res.send(result)
+
+})
+
+app.get('/api/v1/all-task', async(req,res)=>{
+  const {email, taskStatus}= req.query
+  let query;
+  
+  if (email) {
+    
+      return console.log('No email here');
+      
+    } else if (email) {
+
+      query = {email: email}
+      
+    } else if(taskStatus){
+      query = {taskStatus: taskStatus}
+    }
+    
+    else if(email && taskStatus){
+      
+      query = {email: email, taskStatus: taskStatus}
+      
+    }
+    const cursor = addedTaks;
+    // const query = {email:email}
+    const result = await cursor.find(query).toArray();
+
+    res.send(result)
+    
+})
+
+
+
+
+
+app.get('/helth', async(req,res)=>{
+    res.send('Server Is Running')
+})
+
+app.listen(port, ()=>{
+    console.log(`The server is running on port: ${port}`);
+})
+
 
 
 
