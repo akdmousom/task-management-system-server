@@ -81,6 +81,29 @@ app.patch('/api/v1/completed-task/:id', async(req,res)=>{
 
 })
 
+app.patch('/api/v1/ongoing-task/:id', async(req,res)=>{
+  const id = req.params.id;
+  const cursor = addedTaks;
+  const filter = {_id: new ObjectId(id)};
+  const options = { upsert: true };
+  const updateDoc = {
+      $set: {
+        taskStatus: 'ongoing'
+      },
+    };
+  const result = await cursor.updateOne(filter, updateDoc, options);
+  res.send(result)
+
+})
+
+app.delete('/api/v1/delete-task/:id', async(req,res)=>{
+  const {id} = req.params;
+  const cursor = addedTaks;
+  const ids = {_id:new ObjectId(id)}
+  const result = await cursor.deleteOne(ids);
+  res.send(result)
+})
+
 app.get('/api/v1/all-task', async(req,res)=>{
   const {email, taskStatus}= req.query
   let query;
