@@ -104,6 +104,15 @@ app.delete('/api/v1/delete-task/:id', async(req,res)=>{
   res.send(result)
 })
 
+app.get('/api/v1/edit-task/:id', async(req,res)=>{
+  const {id} = req.params;
+  const cursor = addedTaks;
+  const filter = {_id: new ObjectId(id)}
+  const result = await cursor.findOne(filter)
+  res.send(result)  
+})
+
+
 app.get('/api/v1/all-task', async(req,res)=>{
   const {email, taskStatus}= req.query
   let query;
